@@ -6,6 +6,8 @@
 # 2. Check if number is greater than 10
 # 3. Print on console if number is greater or smaller than 10
 
+
+
 num = int(input("Enter number : "))
 if num > 10:
     print("Entered number is greater than 10")

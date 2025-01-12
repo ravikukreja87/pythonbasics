@@ -1,0 +1,50 @@
+import time
+import unittest
+
+from selenium import webdriver
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+
+
+class TestMultiSelect(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = webdriver.Chrome()  # Launch Chrome browser
+
+    def test_multi_select(self):
+        self.driver.get("https://jqueryui.com/droppable/")
+        heading = self.driver.find_element(by=By.XPATH, value="//h1").text
+        print(heading)
+        self.assertEqual(heading, "Droppable")
+
+        # 1. Find the frame webelement
+        frame_element = self.driver.find_element(by=By.XPATH, value="//iframe[@class='demo-frame']")
+        # 2. Switch to frame webelement
+        self.driver.switch_to.frame(frame_element)
+        time.sleep(1)
+
+        # 3. Do element actions/processing - Click on element
+        draggable = self.driver.find_element(by=By.ID, value="draggable")
+        droppable = self.driver.find_element(by=By.ID, value="droppable")
+
+        ActionChains(self.driver).drag_and_drop(draggable, droppable).perform()
+        time.sleep(1)
+
+        actual_result = self.driver.find_element(by=By.XPATH, value="//div[@id='droppable']/p").text
+        expected_result = "Dropped!"
+        self.assertEqual(expected_result, actual_result)
+
+        # 4. Switch back to default content
+        self.driver.switch_to.default_content()
+        time.sleep(1)
+        heading = self.driver.find_element(by=By.XPATH, value="//h1").text
+        print(heading)
+        self.assertEqual(heading, "Droppable")
+
+    def tearDown(self):  # This will be called after every test
+        print(self.driver.title)
+
+    @classmethod
+    def tearDownClass(cls):  # Will be called only once when all tests of class get executed
+        cls.driver.quit()
